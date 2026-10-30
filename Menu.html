@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D.Halloween - Spooky Gourmet Menu</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Creepy aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Montserrat:wght@400;500;600;700&family=Nosifer&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        spooky: {
+                            orange: '#ff6600',
+                            green: '#39ff14',
+                            purple: '#9d4edd',
+                            dark: '#0c0a09',
+                            card: '#1c1917',
+                            border: '#292524',
+                            accent: '#ff0055'
+                        }
+                    },
+                    fontFamily: {
+                        creep: ['Creepster', 'cursive'],
+                        nosifer: ['Nosifer', 'cursive'],
+                        body: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for dark creepy theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0c0a09;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff6600;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #39ff14;
+        }
+
+        /* Ambient Glow & Spider Web Background Effect */
+        body {
+            background-color: #0a0908;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 102, 0, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(57, 255, 20, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(157, 78, 221, 0.05) 0%, transparent 60%);
+            background-attachment: fixed;
+        }
+
+        .neon-glow-orange {
+            text-shadow: 0 0 10px rgba(255, 102, 0, 0.7), 0 0 20px rgba(255, 102, 0, 0.4);
+        }
+        .neon-glow-green {
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.7), 0 0 20px rgba(57, 255, 20, 0.4);
+        }
+        .box-glow {
+            box-shadow: 0 0 15px rgba(255, 102, 0, 0.15);
+        }
+        .box-glow:hover {
+            box-shadow: 0 0 25px rgba(255, 102, 0, 0.35);
+        }
+
+        /* Pulsing animation for Halloween Specials */
+        @keyframes spooky-pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #ff6600); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 12px #39ff14); }
+        }
+        .special-pulse {
+            animation: spooky-pulse 3s infinite ease-in-out;
+        }
+
+        /* Fog overlay animation */
+        .fog-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.15;
+            background: url('https://raw.githubusercontent.com/daniel-tonon/fog-effect/master/fog-low.png') repeat-x;
+            animation: fog 60s linear infinite;
+        }
+        @keyframes fog {
+            0% { background-position: 0 0; }
+            100% { background-position: 1000px 0; }
+        }
+    </style>
+</head>
+<body class="text-stone-200 font-body min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+
+    <div class="fog-container"></div>
+
+    <!-- MAIN HEADER -->
+    <header class="relative z-10 border-b border-stone-800 bg-stone-950/80 backdrop-blur-md sticky top-0 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="filterCategory('ALL')">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-600 to-stone-900 flex items-center justify-center border-2 border-orange-500 shadow-lg text-2xl special-pulse">
+                    🎃
+                </div>
+                <div>
+                    <h1 class="font-nosifer text-2xl sm:text-3xl text-orange-500 tracking-wider neon-glow-orange">D.HALLOWEEN</h1>
+                    <p class="text-xs text-stone-400 font-medium tracking-widest uppercase text-spooky-green">Feast of the Shadows • Restro & Lounge</p>
+                </div>
+            </div>
+
+            <!-- Search Bar & Filters Quick Controls -->
+            <div class="w-full md:w-auto flex flex-1 max-w-md items-center gap-2">
+                <div class="relative w-full">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-orange-500"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search spooky dishes, ingredients..." 
+                        class="w-full pl-10 pr-10 py-2.5 bg-stone-900/90 border border-stone-700 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-stone-100 placeholder-stone-500 text-sm transition-all shadow-inner">
+                    <button id="clearSearch" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Diet Preference Toggles -->
+            <div class="flex items-center gap-3">
+                <!-- Veg / Non-Veg Quick Filter -->
+                <div class="flex bg-stone-900 border border-stone-800 rounded-xl p-1 text-xs">
+                    <button onclick="setDietFilter('ALL')" id="diet-ALL" class="px-3 py-1.5 rounded-lg font-semibold transition-all bg-orange-600 text-stone-950">All</button>
+                    <button onclick="setDietFilter('VEG')" id="diet-VEG" class="px-3 py-1.5 rounded-lg font-semibold transition-all text-stone-400 hover:text-green-400 flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-green-500"></span> Veg
+                    </button>
+                    <button onclick="setDietFilter('NON-VEG')" id="diet-NON-VEG" class="px-3 py-1.5 rounded-lg font-semibold transition-all text-stone-400 hover:text-red-400 flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-red-500"></span> Non-Veg
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HALLOWEEN HERO BANNER -->
+    <div class="relative z-10 bg-gradient-to-b from-stone-950 via-stone-900/60 to-transparent py-8 border-b border-stone-800/50">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h2 class="font-creep text-3xl sm:text-5xl text-stone-100 tracking-wide mb-2">
+                EAT, DRINK & BE <span class="text-orange-500 neon-glow-orange">SCARY</span>
+            </h2>
+            <p class="text-stone-400 max-w-2xl mx-auto text-sm sm:text-base">
+                Step into the dark realm of culinary delights. Try our signature <span class="text-orange-400 font-semibold">"Halloween Spl."</span> creations cursed with terrifyingly good flavors!
+            </p>
+            
+            <!-- Special Tag Highlights -->
+            <div class="flex flex-wrap items-center justify-center gap-3 mt-4 text-xs">
+                <span class="bg-orange-950/60 border border-orange-600/50 text-orange-300 px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <i class="fa-solid fa-ghost text-orange-400"></i> Authentic Spooky Recipes
+                </span>
+                <span class="bg-green-950/60 border border-green-600/50 text-green-300 px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <i class="fa-solid fa-leaf text-green-400"></i> Pure Veg & Non-Veg Kitchens
+                </span>
+                <span class="bg-purple-950/60 border border-purple-600/50 text-purple-300 px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles text-purple-400"></i> Freshly Crafted Brews & Mocktails
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN MENU CONTAINER -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+        
+        <!-- CATEGORY NAVIGATION SCROLLER -->
+        <div class="sticky top-[73px] z-20 bg-stone-950/90 backdrop-blur-md py-3 mb-8 border-b border-stone-800/80 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div id="categoryTabs" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none no-scrollbar">
+                <!-- Javascript will inject categories here -->
+            </div>
+        </div>
+
+        <!-- SEARCH STATUS OR RESULTS COUNTER -->
+        <div id="statusHeader" class="flex items-center justify-between mb-6">
+            <h3 id="currentCategoryTitle" class="font-creep text-2xl sm:text-3xl text-orange-500 tracking-wider flex items-center gap-2">
+                <span>All Potions & Feast</span>
+            </h3>
+            <span id="itemCount" class="text-xs text-stone-400 bg-stone-900 border border-stone-800 px-3 py-1 rounded-full">Showing 0 Items</span>
+        </div>
+
+        <!-- MENU ITEMS GRID -->
+        <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Dishes injected dynamically by JS -->
+        </div>
+
+        <!-- EMPTY SEARCH STATE -->
+        <div id="emptyState" class="hidden text-center py-16 bg-stone-900/40 rounded-3xl border border-dashed border-stone-800 my-8">
+            <div class="text-5xl mb-4">🦇</div>
+            <h3 class="font-creep text-2xl text-stone-300 mb-2">No Spooky Dishes Found!</h3>
+            <p class="text-stone-500 text-sm max-w-md mx-auto mb-6">We searched through all the dark cauldrons but couldn't find matches for your request.</p>
+            <button onclick="resetFilters()" class="bg-orange-600 hover:bg-orange-500 text-stone-950 font-bold px-5 py-2.5 rounded-xl text-sm transition-all">
+                Reset All Filters
+            </button>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="relative z-10 border-t border-stone-800 bg-stone-950/90 py-8 mt-12 text-stone-500 text-xs">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-4">
+            <div class="flex items-center justify-center gap-3">
+                <span class="font-nosifer text-orange-500 text-lg">D.HALLOWEEN</span>
+            </div>
+            <p class="max-w-xl mx-auto text-stone-400">
+                Beware: Tastes terrifyingly delicious! Prices are subject to government taxes as applicable.
+            </p>
+            <p class="text-stone-600">
+                © <span id="year"></span> D.Halloween Restro & Bar. All Rights Reserved. Designed with Spooky Care. 🕸️
+            </p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT DATA & APP LOGIC -->
+    <script>
+        // Set dynamic year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // FULL ACCURATE MENU DATA
+        const rawMenuData = [
+            // VEG SOUPS
+            { category: "VEG SOUPS", name: "Sweet Corn Veg Soup", price: 109, isVeg: true, desc: "Creamy golden corn broth boiled with secret herbs and mild spice." },
+            { category: "VEG SOUPS", name: "Hot & Sour Veg Soup", price: 119, isVeg: true, desc: "Zesty, spicy, and tangy dark broth loaded with shredded garden vegetables." },
+            { category: "VEG SOUPS", name: "Manchow Veg Soup", price: 129, isVeg: true, desc: "Classic Indo-Chinese thick soup served with crispy fried noodles on top." },
+            { category: "VEG SOUPS", name: "Lemon Coriander Soup", price: 129, isVeg: true, desc: "Refreshing clear broth infused with fresh lemon squeeze and fragrant coriander." },
+            { category: "VEG SOUPS", name: "Cream of Tomato Soup", price: 129, isVeg: true, desc: "Rich velvety tomato soup seasoned with butter and crunchy croutons." },
+            { category: "VEG SOUPS", name: "Cream of Mushroom Soup", price: 139, isVeg: true, desc: "Earthy mushroom pureed in thick rich cream with black pepper hint." },
+
+            // NON-VEG SOUPS
+            { category: "NON-VEG SOUPS", name: "Sweet Corn Chicken Soup", price: 129, isVeg: false, desc: "Tender shredded chicken suspended in smooth sweet corn soup." },
+            { category: "NON-VEG SOUPS", name: "Hot & Sour Chicken Soup", price: 129, isVeg: false, desc: "Dark spicy broth with shredded chicken, chili peppers, and vinegar kick." },
+            { category: "NON-VEG SOUPS", name: "Manchow Chicken Soup", price: 139, isVeg: false, desc: "Hearty spicy chicken soup served with crisp dark noodles." },
+            { category: "NON-VEG SOUPS", name: "Lemon Coriander Chicken Soup", price: 139, isVeg: false, desc: "Zesty lime chicken broth with crushed coriander and pepper." },
+            { category: "NON-VEG SOUPS", name: "Dragon Chicken Soup", price: 149, isVeg: false, desc: "Fiery red dragon spice broth with diced chicken and garlic chunks." },
+            { category: "NON-VEG SOUPS", name: "Chicken Pepper Soup", price: 149, isVeg: false, desc: "South Indian style crushed black pepper chicken extract simmered deep." },
+            { category: "NON-VEG SOUPS", name: "Tom Yum Soup", price: 149, isVeg: false, desc: "Thai lemongrass and chili spicy broth loaded with chicken bites." },
+
+            // VEG STARTERS (DRY & FRY)
+            { category: "VEG STARTERS", name: "French Fries", price: 179, isVeg: true, desc: "Classic golden fried crispy potato sticks salted to perfection." },
+            { category: "VEG STARTERS", name: "Peri Peri Fries", price: 199, isVeg: true, desc: "Crispy potato fries tossed in fiery African Peri-Peri seasoning." },
+            { category: "VEG STARTERS", name: "Paneer 65", price: 249, isVeg: true, desc: "Cottage cheese cubes tossed in spicy yogurt, curry leaves, and green chili." },
+            { category: "VEG STARTERS", name: "Mushroom 65", price: 259, isVeg: true, desc: "Crispy battered button mushrooms tossed in spicy 65 masala mixture." },
+            { category: "VEG STARTERS", name: "Chilly Garlic Paneer", price: 249, isVeg: true, desc: "Paneer cubes wok-fried with minced garlic, soy, and fiery red chili." },
+            { category: "VEG STARTERS", name: "Chilly Garlic Babycorn", price: 249, isVeg: true, desc: "Crisp babycorn wok-tossed with fresh crushed garlic and chili oil." },
+            { category: "VEG STARTERS", name: "Chilly Garlic Mushroom", price: 259, isVeg: true, desc: "Button mushrooms coated in dark chilly garlic pan glaze." },
+            { category: "VEG STARTERS", name: "Babycorn Salt N’ Pepper", price: 239, isVeg: true, desc: "Golden fried crunchy babycorn tossed with coarsely ground black pepper & scallions." },
+            { category: "VEG STARTERS", name: "Mushroom Salt N’ Pepper", price: 249, isVeg: true, desc: "Crispy fried mushrooms sprinkled with crushed pepper and spring onion." },
+            { category: "VEG STARTERS", name: "Halloween Spl. Crispy Corn", price: 199, isVeg: true, special: true, desc: "Chef's spooky special juicy sweetcorn kernels fried ultra crisp with fiery herbs." },
+            { category: "VEG STARTERS", name: "Veg Manchurian Dry/Gravy", price: "₹189/₹199", isVeg: true, desc: "Fried veg balls tossed in signature soy-garlic Manchurian sauce." },
+            { category: "VEG STARTERS", name: "Paneer Manchurian Dry/Gravy", price: "₹199/₹219", isVeg: true, desc: "Paneer cubes prepared in savory dark Manchurian style." },
+            { category: "VEG STARTERS", name: "Babycorn Manchurian Dry/Gravy", price: "₹239/₹249", isVeg: true, desc: "Crispy babycorn tossed in zesty garlic Manchurian sauce." },
+            { category: "VEG STARTERS", name: "Mushroom Manchurian Dry/Gravy", price: "₹249/₹259", isVeg: true, desc: "Sliced mushrooms cooked in savory brown Manchurian coating." },
+            { category: "VEG STARTERS", name: "Chilly Manchurian Dry/Gravy", price: "₹189/₹199", isVeg: true, desc: "Spicy combination sauce tossed over fried vegetable bites." },
+            { category: "VEG STARTERS", name: "Chilly Paneer Dry/Gravy", price: "₹245/₹255", isVeg: true, desc: "Fresh cottage cheese tossed with bell peppers, onions, and spicy green chili glaze." },
+            { category: "VEG STARTERS", name: "Chilly Babycorn Dry/Gravy", price: "₹249/₹259", isVeg: true, desc: "Babycorn slices sautéed with dark soya chili pepper mix." },
+            { category: "VEG STARTERS", name: "Chilly Mushroom Dry/Gravy", price: "₹249/₹259", isVeg: true, desc: "Juicy mushrooms tossed with capsicum in chili soy gravy/dry sauce." },
+            { category: "VEG STARTERS", name: "Halloween Spl. Golden Fried Babycorn", price: 229, isVeg: true, special: true, desc: "Signature golden crusted tender babycorn seasoned with spooky ghost chili powder." },
+            { category: "VEG STARTERS", name: "Halloween Spl. Cottage Cheese & Cracking Spinach", price: 289, isVeg: true, special: true, desc: "Crispy paneer strips bedded on crackling salted spinach leaves." },
+
+            // NON-VEG STARTERS (DRY & FRY)
+            { category: "NON-VEG STARTERS", name: "Honey Glazed Chicken", price: 249, isVeg: false, desc: "Crispy chicken strips coated in sweet sticky honey chili glaze." },
+            { category: "NON-VEG STARTERS", name: "Dragon Chicken", price: 299, isVeg: false, desc: "Strips of chicken tossed with cashews, red chili paste, and sliced capsicum." },
+            { category: "NON-VEG STARTERS", name: "Chicken Manchurian", price: 269, isVeg: false, desc: "Deep fried chicken morsels cooked in tangy soy, ginger & garlic dark gravy." },
+            { category: "NON-VEG STARTERS", name: "Halloween Spl. Chicken Dry", price: 279, isVeg: false, special: true, desc: "Spooky dark spiced fried chicken chunks tossed in secret vampire chili oil." },
+            { category: "NON-VEG STARTERS", name: "Halloween Spl. Fried Chicken", price: 289, isVeg: false, special: true, desc: "Extra crunchy Halloween special spiced fried chicken with house garlic dip." },
+            { category: "NON-VEG STARTERS", name: "Halloween Spl. Kung Pao Chicken", price: 269, isVeg: false, special: true, desc: "Classic Kung Pao style wok chicken cooked with dried chilies and peanuts." },
+            { category: "NON-VEG STARTERS", name: "Halloween Spl. Dynamic Chicken", price: 299, isVeg: false, special: true, desc: "Explosive dynamic mayo-chili glazed crispy chicken chunks." },
+            { category: "NON-VEG STARTERS", name: "Prawns 65", price: 289, isVeg: false, desc: "Succulent prawns fried with southern spices, curry leaves and green chilies." },
+            { category: "NON-VEG STARTERS", name: "Hot Garlic Prawns", price: 299, isVeg: false, desc: "Fresh juicy prawns tossed in fiery garlic red chili gravy sauce." },
+            { category: "NON-VEG STARTERS", name: "Garlic Prawns Dry", price: 299, isVeg: false, desc: "Crispy butter garlic coated prawns sprinkled with scallions." },
+            { category: "NON-VEG STARTERS", name: "Chilly Chicken Dry/Gravy", price: "₹269/₹279", isVeg: false, desc: "All-time favorite spicy Indo-Chinese chilly chicken with bell peppers." },
+            { category: "NON-VEG STARTERS", name: "Chicken 65 Dry/Gravy", price: "₹269/₹279", isVeg: false, desc: "Classic spicy marinated boneless chicken fried and tempered." },
+            { category: "NON-VEG STARTERS", name: "Chilly Prawns Dry/Gravy", price: "₹299/₹309", isVeg: false, desc: "Tender prawns prepared in chili garlic pepper marinade." },
+            { category: "NON-VEG STARTERS", name: "Halloween Spl. Egg Fry", price: 119, isVeg: false, special: true, desc: "Hard-boiled eggs flash-fried with roasted scary spices & curry leaves." },
+            { category: "NON-VEG STARTERS", name: "Halloween Spl. Egg Bhurji", price: 129, isVeg: false, special: true, desc: "Scrambled spiced eggs cooked with onions, green chilies & butter." },
+            { category: "NON-VEG STARTERS", name: "Garlic Chicken Dry", price: 269, isVeg: false, desc: "Chicken chunks loaded with heavy roasted garlic bits." },
+            { category: "NON-VEG STARTERS", name: "Chicken Lollypop", price: 299, isVeg: false, desc: "Classic frenched chicken winglets fried crispy with red spice batter." },
+            { category: "NON-VEG STARTERS", name: "Drums of Heaven", price: 289, isVeg: false, desc: "Chicken lollypops tossed in sweet & spicy wok garlic sauce." },
+            { category: "NON-VEG STARTERS", name: "Chicken Pakora", price: 249, isVeg: false, desc: "Indian style spiced gram flour batter coated crispy chicken fritters." },
+            { category: "NON-VEG STARTERS", name: "Devil Chicken", price: 279, isVeg: false, desc: "Fiery spicy red chicken sautéed with roasted chilies and hot sauce." },
+            { category: "NON-VEG STARTERS", name: "Hot Garlic Chicken", price: 289, isVeg: false, desc: "Chicken pieces tossed in dark hot chili garlic paste sauce." },
+            { category: "NON-VEG STARTERS", name: "Szechwan Chicken", price: 279, isVeg: false, desc: "Chicken tossed in pungent homemade Sichuan pepper chili sauce." },
+            { category: "NON-VEG STARTERS", name: "Singapore Chicken", price: 299, isVeg: false, desc: "Chicken cooked with mild curry spices, peppers, and sesame seeds." },
+            { category: "NON-VEG STARTERS", name: "Apollo Chicken", price: 299, isVeg: false, desc: "Hyderabadi style fried chicken coated with curry leaf yogurt sauce." },
+            { category: "NON-VEG STARTERS", name: "Hong Kong Chicken", price: 299, isVeg: false, desc: "Chicken pieces wok-tossed with cashews and dark rich sweet sauce." },
+            { category: "NON-VEG STARTERS", name: "Spinach Chicken", price: 289, isVeg: false, desc: "Boneless chicken morsels cooked with crispy seasoned spinach." },
+            { category: "NON-VEG STARTERS", name: "Chilly Chicken Wings", price: 269, isVeg: false, desc: "Crispy chicken wings tossed in fiery dark chilly glaze." },
+
+            // TANDOORI POT
+            { category: "TANDOORI POT", name: "Tandoori Chicken", price: "Half ₹269 / Full ₹499", isVeg: false, desc: "Classic clay oven roasted marinated chicken on bone." },
+            { category: "TANDOORI POT", name: "B.B.Q Chicken", price: "Half ₹299 / Full ₹589", isVeg: false, desc: "Smoky charcoal grilled chicken coated in rich BBQ marinade." },
+            { category: "TANDOORI POT", name: "Murg Haryali Kabab", price: 289, isVeg: false, desc: "Chicken tikka marinated in mint, coriander, and spinach green masala." },
+            { category: "TANDOORI POT", name: "Murg Tangri Kabab", price: 299, isVeg: false, desc: "Succulent chicken drumsticks grilled in aromatic cream and spice blend." },
+            { category: "TANDOORI POT", name: "Murg Malai Kabab", price: 299, isVeg: false, desc: "Melt-in-mouth chicken marinated in rich cream, cheese, and cardamom." },
+            { category: "TANDOORI POT", name: "Chicken Pahadi Kabab", price: 299, isVeg: false, desc: "Hilly herb infused spicy grilled chicken tikka kebabs." },
+            { category: "TANDOORI POT", name: "Chicken Seekh Kabab", price: 299, isVeg: false, desc: "Minced chicken skewers blended with spices and tandoor charred." },
+            { category: "TANDOORI POT", name: "Murg Kallimirch Kabab", price: 299, isVeg: false, desc: "Black pepper heavy creamy tandoori chicken tikka." },
+            { category: "TANDOORI POT", name: "Murg Sultani Kabab", price: 349, isVeg: false, desc: "Royal spiced double-marinated royal chicken kebabs." },
+            { category: "TANDOORI POT", name: "Halloween Spl. Tandoori Wings", price: 279, isVeg: false, special: true, desc: "Clay oven charred scary spice coated wings served with mint chutney." },
+            { category: "TANDOORI POT", name: "Grilled Chicken Leg", price: 329, isVeg: false, desc: "Whole chicken leg grilled over slow charcoal with house herbs." },
+            { category: "TANDOORI POT", name: "Charcoal Tandoori Lollipop", price: 329, isVeg: false, desc: "Smoky tandoori style chicken lollipop skewers." },
+            { category: "TANDOORI POT", name: "Murg Basket Chicken", price: 349, isVeg: false, desc: "Assorted tandoori chicken skewers served in a glowing pot." },
+            { category: "TANDOORI POT", name: "Special Paneer Tikka", price: 249, isVeg: true, desc: "Charred cottage cheese cubes marinated in spicy hung curd." },
+            { category: "TANDOORI POT", name: "Malai Paneer Tikka", price: 269, isVeg: true, desc: "Soft paneer cubes coated with rich cream, cashew paste, and butter." },
+            { category: "TANDOORI POT", name: "Hariyali Paneer Tikka", price: 269, isVeg: true, desc: "Fresh paneer marinated in vibrant mint and coriander paste." },
+            { category: "TANDOORI POT", name: "Makhmali Paneer Tikka", price: 299, isVeg: true, desc: "Silky soft tandoori paneer skewers stuffed with cottage cheese mix." },
+            { category: "TANDOORI POT", name: "Garlic Chicken Tikka", price: 299, isVeg: false, desc: "Garlic lovers special clay oven grilled chicken chunks." },
+            { category: "TANDOORI POT", name: "Coal Chicken Tikka", price: 299, isVeg: false, desc: "Extra smoky charcoal grilled boneless chicken tikka." },
+            { category: "TANDOORI POT", name: "Afghani Chicken Tikka", price: 299, isVeg: false, desc: "Mild, rich and creamy cashew marinated tandoori chicken chunks." },
+            { category: "TANDOORI POT", name: "Murg Achari Tikka", price: 309, isVeg: false, desc: "Tangy Indian pickle spiced tandoori chicken tikka." },
+            { category: "TANDOORI POT", name: "Halloween Spl. Prawns Tikka", price: 329, isVeg: false, special: true, desc: "Jumbo prawns marinated in fiery tandoori spices and charred over embers." },
+
+            // MAIN COURSE NON-VEG
+            { category: "MAIN COURSE", name: "Egg Masala", price: 199, isVeg: false, desc: "Hard boiled eggs cooked in traditional spicy onion-tomato gravy." },
+            { category: "MAIN COURSE", name: "Egg Do Pyaza", price: 209, isVeg: false, desc: "Egg curry prepared with double amount of caramelized onions." },
+            { category: "MAIN COURSE", name: "Egg Handi", price: 239, isVeg: false, desc: "Clay handi slow cooked rich egg gravy with aromatic spices." },
+            { category: "MAIN COURSE", name: "Egg Kadai", price: 249, isVeg: false, desc: "Eggs tossed with coarsely ground spices, bell pepper and tomatoes." },
+            { category: "MAIN COURSE", name: "Butter Chicken Masala (Bone)", price: 329, isVeg: false, desc: "Classic bone-in tandoori chicken simmered in creamy tomato butter gravy." },
+            { category: "MAIN COURSE", name: "Butter Chicken Masala (Boneless)", price: 349, isVeg: false, desc: "Boneless chicken tikka pieces in silky smooth butter-tomato gravy." },
+            { category: "MAIN COURSE", name: "Chicken Tikka Masala", price: 339, isVeg: false, desc: "Smoky grilled chicken tikka pieces in rich orange spicy curry." },
+            { category: "MAIN COURSE", name: "Chicken Lababdar", price: 339, isVeg: false, desc: "Rich royal chicken curry prepared with grated cheese and cashew cream." },
+            { category: "MAIN COURSE", name: "Special Prawns Masala", price: 339, isVeg: false, desc: "Succulent fresh prawns slow cooked in spicy coconut gravy." },
+            { category: "MAIN COURSE", name: "Kadai Chicken", price: 349, isVeg: false, desc: "Chicken cooked in iron wok with coriander seeds, bell peppers and chilies." },
+
+            // MAIN COURSE VEG
+            { category: "MAIN COURSE", name: "Matar Paneer Masala", price: 299, isVeg: true, desc: "Soft paneer cubes and green peas cooked in spiced tomato onion gravy." },
+            { category: "MAIN COURSE", name: "Paneer Tikka Masala", price: 299, isVeg: true, desc: "Charred paneer tikka pieces cooked in thick orange spiced gravy." },
+            { category: "MAIN COURSE", name: "Mushroom Masala", price: 299, isVeg: true, desc: "Button mushrooms simmered in dark spiced onion tomato masala." },
+            { category: "MAIN COURSE", name: "Mushroom Do Pyaza", price: 299, isVeg: true, desc: "Mushrooms cooked with abundant diced onions and whole spices." },
+            { category: "MAIN COURSE", name: "Mushroom Butter Masala", price: 299, isVeg: true, desc: "Button mushrooms prepared in silky smooth butter cream tomato sauce." },
+            { category: "MAIN COURSE", name: "Methi Mushroom", price: 299, isVeg: true, desc: "Fresh fenugreek leaves and mushrooms cooked with rich cream." },
+            { category: "MAIN COURSE", name: "Mushroom Matar Masala", price: 299, isVeg: true, desc: "Combination of green peas and fresh mushrooms in aromatic curry." },
+            { category: "MAIN COURSE", name: "Kadai Paneer", price: 319, isVeg: true, desc: "Paneer tossed with bell peppers and roasted kadai masala." },
+            { category: "MAIN COURSE", name: "Kadai Mushroom", price: 319, isVeg: true, desc: "Fresh mushrooms wok-cooked with capsicum and coarse spices." },
+            { category: "MAIN COURSE", name: "Mushroom Babycorn Masala", price: 319, isVeg: true, desc: "Sliced babycorn and mushrooms cooked in rich semi-dry gravy." },
+            { category: "MAIN COURSE", name: "Paneer Pasanda", price: 329, isVeg: true, desc: "Stuffed paneer triangles served in rich cashew nut gravy." },
+            { category: "MAIN COURSE", name: "Halloween Spl. Veg Jaipuri", price: 329, isVeg: true, special: true, desc: "Chef's scary special mixed veg curry topped with crispy papad." },
+            { category: "MAIN COURSE", name: "Paneer Handi", price: 349, isVeg: true, desc: "Clay handi slow cooked rich paneer gravy." },
+            { category: "MAIN COURSE", name: "Mushroom Handi", price: 349, isVeg: true, desc: "Slow cooked mushroom handi in rich muglai spicy gravy." },
+            { category: "MAIN COURSE", name: "Dal Fry", price: 159, isVeg: true, desc: "Yellow lentils cooked with turmeric, cumin, garlic and tomatoes." },
+            { category: "MAIN COURSE", name: "Dal Tadka", price: 179, isVeg: true, desc: "Tempered yellow dal topped with sizzling ghee, garlic & red chilies." },
+            { category: "MAIN COURSE", name: "Mix Veg Gravy", price: 199, isVeg: true, desc: "Assorted garden fresh vegetables cooked in homestyle gravy." },
+            { category: "MAIN COURSE", name: "Green Peas Masala", price: 239, isVeg: true, desc: "Sweet green peas cooked in spiced tomato onion curry." },
+            { category: "MAIN COURSE", name: "Aloo Gobi Masala", price: 249, isVeg: true, desc: "Classic combination of tender potato and cauliflower florets." },
+            { category: "MAIN COURSE", name: "Mushroom Pepper Fry", price: 249, isVeg: true, desc: "South Indian style spicy crushed black pepper mushroom fry." },
+            { category: "MAIN COURSE", name: "Kadai Vegetable", price: 279, isVeg: true, desc: "Assorted vegetables cooked with kadai herbs and peppers." },
+            { category: "MAIN COURSE", name: "Palak Paneer", price: 279, isVeg: true, desc: "Paneer cubes in healthy spiced fresh spinach puree." },
+            { category: "MAIN COURSE", name: "Methi Paneer", price: 299, isVeg: true, desc: "Paneer cooked with aromatic fresh fenugreek leaves." },
+            { category: "MAIN COURSE", name: "Shahi Paneer", price: 299, isVeg: true, desc: "Royal paneer curry made with almond, cashew and saffron gravy." },
+            { category: "MAIN COURSE", name: "Paneer Butter Masala", price: 299, isVeg: true, desc: "Melt-in-mouth cottage cheese in rich, sweet & creamy butter tomato gravy." },
+            { category: "MAIN COURSE", name: "Paneer Do Pyaza", price: 299, isVeg: true, desc: "Paneer cooked with double onion rings and rich spices." },
+            { category: "MAIN COURSE", name: "Paneer Lababdar", price: 299, isVeg: true, desc: "Grating paneer and paneer cubes in creamy spicy tomato sauce." },
+
+            // SIZZLERS & PLATTERS
+            { category: "SIZZLERS & PLATTERS", name: "Veg Platter", price: 499, isVeg: true, desc: "Grand assortment of paneer tikka, haryali tikka, crispy corn & mushroom kebabs." },
+            { category: "SIZZLERS & PLATTERS", name: "Non-Veg Platter", price: 599, isVeg: false, desc: "Ultimate kebab platter featuring tandoori chicken, chicken tikka, seekh & wings." },
+            { category: "SIZZLERS & PLATTERS", name: "Chinese Veg Sizzler", price: 555, isVeg: true, desc: "Sizzling hot plate with veg noodles/rice, Manchurian, fries & sizzling veggies." },
+            { category: "SIZZLERS & PLATTERS", name: "Chinese Non-Veg Sizzler", price: 639, isVeg: false, desc: "Sizzling platter with chicken fried rice, chili chicken, lollypop & pepper sauce." },
+            { category: "SIZZLERS & PLATTERS", name: "Mix Sizzler (Veg & Non-Veg)", price: 655, isVeg: false, desc: "Sizzling feast combining chicken tikka, paneer, garlic sauce & butter rice." },
+            { category: "SIZZLERS & PLATTERS", name: "Chicken in Garlic Sauce (served with noodles or rice)", price: 599, isVeg: false, desc: "Sizzling chicken in rich garlic gravy paired with choice of noodles or rice." },
+            { category: "SIZZLERS & PLATTERS", name: "Mix Veg Hot Garlic Sauce (served with noodles or rice)", price: 599, isVeg: true, desc: "Sizzling veggies in hot chili garlic gravy served with noodles/rice." },
+
+            // POT BREAD
+            { category: "BREADS", name: "Tawa Pula (2 pcs)", price: 30, isVeg: true, desc: "Homestyle flat Indian tawa bread." },
+            { category: "BREADS", name: "Butter Pula (2 pcs)", price: 35, isVeg: true, desc: "Soft tawa breads brushed with rich butter." },
+            { category: "BREADS", name: "Plain Naan", price: 40, isVeg: true, desc: "Clay oven baked soft leavened flatbread." },
+            { category: "BREADS", name: "Plain Kulcha", price: 40, isVeg: true, desc: "Soft tandoori leavened flatbread." },
+            { category: "BREADS", name: "Tandoori Roti", price: 40, isVeg: true, desc: "Whole wheat bread baked in clay tandoor." },
+            { category: "BREADS", name: "Butter Roti", price: 45, isVeg: true, desc: "Tandoori wheat roti glazed with butter." },
+            { category: "BREADS", name: "Butter Kulcha", price: 49, isVeg: true, desc: "Butter glazed soft kulcha bread." },
+            { category: "BREADS", name: "Lacha Paratha", price: 49, isVeg: true, desc: "Multi-layered crispy tandoori wheat paratha." },
+            { category: "BREADS", name: "Butter Naan", price: 49, isVeg: true, desc: "Traditional naan lavishly brushed with melted butter." },
+            { category: "BREADS", name: "Garlic Naan", price: 59, isVeg: true, desc: "Tandoori naan topped with chopped fresh garlic and butter." },
+            { category: "BREADS", name: "Paneer Kulcha", price: 59, isVeg: true, desc: "Kulcha bread stuffed with spiced cottage cheese." },
+            { category: "BREADS", name: "Stuffed Veg Kulcha", price: 79, isVeg: true, desc: "Stuffed with mashed potato, veggies and Indian herbs." },
+            { category: "BREADS", name: "Stuffed Chicken Kulcha", price: 99, isVeg: false, desc: "Kulcha filled with spiced minced chicken stuffing." },
+
+            // BIRYANI & PULAO
+            { category: "BIRYANI & PULAO", name: "Veg Pulao", price: 219, isVeg: true, desc: "Basmati rice cooked with fresh vegetables and mild whole spices." },
+            { category: "BIRYANI & PULAO", name: "Paneer Pulao", price: 229, isVeg: true, desc: "Basmati rice cooked with paneer cubes and fragrant ghee." },
+            { category: "BIRYANI & PULAO", name: "Matar Pulao", price: 229, isVeg: true, desc: "Fragrant rice tossed with tender green peas and cumin." },
+            { category: "BIRYANI & PULAO", name: "Mushroom Pulao", price: 239, isVeg: true, desc: "Aromatic basmati rice cooked with seasoned button mushrooms." },
+            { category: "BIRYANI & PULAO", name: "Kaju Pulao", price: 249, isVeg: true, desc: "Rich basmati rice cooked with roasted cashews and ghee." },
+            { category: "BIRYANI & PULAO", name: "Kashmiri Pulao", price: 269, isVeg: true, desc: "Sweet fragrant basmati rice cooked with dry fruits and cherry." },
+            { category: "BIRYANI & PULAO", name: "Halloween Spl. Veg Pulao", price: 289, isVeg: true, special: true, desc: "Chef's signature halloween spiced veg pulao served in dark pot." },
+            { category: "BIRYANI & PULAO", name: "Veg Dum Biryani", price: 219, isVeg: true, desc: "Dum cooked aromatic basmati rice layered with spiced vegetables." },
+            { category: "BIRYANI & PULAO", name: "Paneer Biryani", price: 229, isVeg: true, desc: "Rich dum biryani layered with marinated cottage cheese cubes." },
+            { category: "BIRYANI & PULAO", name: "Mushroom Biryani", price: 239, isVeg: true, desc: "Layered basmati biryani with juicy spicy mushrooms." },
+            { category: "BIRYANI & PULAO", name: "Halloween Spl. Veg Biryani", price: 249, isVeg: true, special: true, desc: "Spicy dark spiced layered veg biryani cooked sealed under dough." },
+            { category: "BIRYANI & PULAO", name: "Egg Dum Biryani", price: 199, isVeg: false, desc: "Hyderabadi style dum biryani served with boiled eggs." },
+            { category: "BIRYANI & PULAO", name: "Chicken Dum Biryani", price: 279, isVeg: false, desc: "Classic slow dum cooked chicken biryani loaded with saffron & mint." },
+            { category: "BIRYANI & PULAO", name: "Chicken 65 Biryani", price: 289, isVeg: false, desc: "Dum biryani topped with spicy fried Chicken 65 boneless bites." },
+            { category: "BIRYANI & PULAO", name: "Chicken Fry Piece Biryani", price: 299, isVeg: false, desc: "Biryani rice served with Andhra style spicy fried chicken." },
+            { category: "BIRYANI & PULAO", name: "Chicken Egg Biryani", price: 299, isVeg: false, desc: "Rich chicken biryani accompanied with boiled egg." },
+            { category: "BIRYANI & PULAO", name: "Chicken Lollipop Biryani", price: 319, isVeg: false, desc: "Biryani rice topped with crispy fried chicken lollipops." },
+            { category: "BIRYANI & PULAO", name: "Mix Non-Veg Biryani", price: 339, isVeg: false, desc: "Grand biryani loaded with chicken, egg and juicy prawns." },
+
+            // NOODLES & RICE
+            { category: "NOODLES & RICE", name: "Chilly Garlic Noodles", price: 239, isVeg: true, desc: "Spicy wok-tossed noodles with red chilies and heavy garlic." },
+            { category: "NOODLES & RICE", name: "Chilly Garlic Chi Noodles", price: 269, isVeg: false, desc: "Chicken noodles cooked with hot chilly garlic wok oil." },
+            { category: "NOODLES & RICE", name: "Veg Hakka Noodles/Szechwan", price: "₹199/₹219", isVeg: true, desc: "Classic vegetable stir-fried noodles available in mild or Szechwan style." },
+            { category: "NOODLES & RICE", name: "Egg Hakka Noodles/Szechwan", price: "₹219/₹229", isVeg: false, desc: "Stir-fried noodles with egg ribbons and vegetables." },
+            { category: "NOODLES & RICE", name: "Paneer Hakka Noodles/Szechwan", price: "₹219/₹229", isVeg: true, desc: "Noodles tossed with soft paneer cubes and crunchy veggies." },
+            { category: "NOODLES & RICE", name: "Mushroom Hakka Noodles/Szechwan", price: "₹229/₹239", isVeg: true, desc: "Mushroom stir-fried noodles with green peppers." },
+            { category: "NOODLES & RICE", name: "Chicken Hakka Noodles/Szechwan", price: "₹239/₹249", isVeg: false, desc: "Stir-fried noodles loaded with shredded boneless chicken." },
+            { category: "NOODLES & RICE", name: "Prawns Hakka Noodles/Szechwan", price: "₹259/₹269", isVeg: false, desc: "Wok noodles tossed with juicy prawns and scallions." },
+            { category: "NOODLES & RICE", name: "Mix Non-Veg Noodles/Szechwan", price: "₹289/₹299", isVeg: false, desc: "Noodles loaded with chicken, egg and fresh prawns." },
+            { category: "NOODLES & RICE", name: "Plain Rice", price: 79, isVeg: true, desc: "Steamed fluffy white rice." },
+            { category: "NOODLES & RICE", name: "Curd Rice", price: 119, isVeg: true, desc: "Cooling curd rice tempered with mustard seeds and curry leaves." },
+            { category: "NOODLES & RICE", name: "Jeera Rice", price: 149, isVeg: true, desc: "Basmati rice tempered with roasted cumin seeds and ghee." },
+            { category: "NOODLES & RICE", name: "Ghee Rice", price: 149, isVeg: true, desc: "Fragrant rice cooked in pure desi ghee and cashew nuts." },
+            { category: "NOODLES & RICE", name: "Steam Basmati Rice", price: 129, isVeg: true, desc: "Long grain steamed fragrant Basmati rice." },
+            { category: "NOODLES & RICE", name: "Veg Fried Rice/Szechwan", price: "₹179/₹199", isVeg: true, desc: "Wok fried basmati rice with finely diced vegetables." },
+            { category: "NOODLES & RICE", name: "Paneer Fried Rice/Szechwan", price: "₹189/₹199", isVeg: true, desc: "Fried rice tossed with soft cottage cheese cubes." },
+            { category: "NOODLES & RICE", name: "Mushroom Fried Rice/Szechwan", price: "₹199/₹209", isVeg: true, desc: "Wok fried rice tossed with mushrooms and scallions." },
+            { category: "NOODLES & RICE", name: "Egg Fried Rice/Szechwan", price: "₹189/₹199", isVeg: false, desc: "Classic egg fried rice tossed with soy and pepper." },
+            { category: "NOODLES & RICE", name: "Chicken Fried Rice/Szechwan", price: "₹199/₹209", isVeg: false, desc: "Stir-fried basmati rice with chicken chunks and soy sauce." },
+            { category: "NOODLES & RICE", name: "Prawns Fried Rice/Szechwan", price: "₹249/₹259", isVeg: false, desc: "Juicy prawns stir fried with basmati rice." },
+
+            // DESSERTS
+            { category: "DESSERTS", name: "Hot Gulab Jamun (2 pcs)", price: 39, isVeg: true, desc: "Warm sweet milk dumplings dipped in cardamom sugar syrup." },
+            { category: "DESSERTS", name: "Choco Lava", price: 99, isVeg: true, desc: "Warm chocolate cake with molten chocolate center eruption." },
+            { category: "DESSERTS", name: "Gulab Jamun with Ice-Cream", price: 109, isVeg: true, desc: "Hot gulab jamun served with chilled vanilla ice cream scoop." },
+            { category: "DESSERTS", name: "Brownie with Ice-Cream", price: 199, isVeg: true, desc: "Fudgy walnut brownie topped with vanilla ice cream & chocolate sauce." },
+            { category: "DESSERTS", name: "Birthday/Anniversary Cake (1 pound)", price: 499, isVeg: true, desc: "Fresh cream celebration cake specially crafted for party." },
+
+            // ICE-CREAM & SHAKES
+            { category: "ICE-CREAM & SHAKES", name: "Vanilla Ice-Cream", price: 89, isVeg: true, desc: "Classic vanilla bean scoop." },
+            { category: "ICE-CREAM & SHAKES", name: "Mango Ice-Cream", price: 89, isVeg: true, desc: "Rich Alphonso mango flavored scoop." },
+            { category: "ICE-CREAM & SHAKES", name: "Strawberry Ice-Cream", price: 99, isVeg: true, desc: "Sweet pink strawberry delight." },
+            { category: "ICE-CREAM & SHAKES", name: "Pista Ice-Cream", price: 119, isVeg: true, desc: "Pistachio flavored rich scoop." },
+            { category: "ICE-CREAM & SHAKES", name: "Butterscotch Ice-Cream", price: 139, isVeg: true, desc: "Crunchy butterscotch praline scoop." },
+            { category: "ICE-CREAM & SHAKES", name: "Tutti Frutti Ice-Cream", price: 139, isVeg: true, desc: "Multi-colored fruit jelly scoop." },
+            { category: "ICE-CREAM & SHAKES", name: "Chocolate Ice-Cream", price: 149, isVeg: true, desc: "Deep rich dark chocolate scoop." },
+            { category: "ICE-CREAM & SHAKES", name: "Vanilla Shake", price: 139, isVeg: true, desc: "Thick creamy vanilla milkshake." },
+            { category: "ICE-CREAM & SHAKES", name: "Mango Shake", price: 139, isVeg: true, desc: "Real mango pulp thick shake." },
+            { category: "ICE-CREAM & SHAKES", name: "Strawberry Shake", price: 149, isVeg: true, desc: "Sweet strawberry thick milkshake." },
+            { category: "ICE-CREAM & SHAKES", name: "Pista Shake", price: 149, isVeg: true, desc: "Pistachio nut blended thick shake." },
+            { category: "ICE-CREAM & SHAKES", name: "Butterscotch Shake", price: 169, isVeg: true, desc: "Crunchy butterscotch thick shake." },
+            { category: "ICE-CREAM & SHAKES", name: "Tutti Frutti Shake", price: 179, isVeg: true, desc: "Fruity sweet blended shake with candied fruit." },
+            { category: "ICE-CREAM & SHAKES", name: "Chocolate Shake", price: 199, isVeg: true, desc: "Thick decadent chocolate milkshake." },
+            { category: "ICE-CREAM & SHAKES", name: "Cold Coffee Shake", price: 199, isVeg: true, desc: "Chilled blended espresso coffee with milk and vanilla ice cream." },
+            { category: "ICE-CREAM & SHAKES", name: "Oreo Shake", price: 219, isVeg: true, desc: "Crushed Oreo cookie thick chocolate shake." },
+            { category: "ICE-CREAM & SHAKES", name: "KitKat Shake", price: 229, isVeg: true, desc: "Blended KitKat chocolate bar thick shake." },
+
+            // BEVERAGES & MOCKTAILS
+            { category: "BEVERAGES & MOCKTAILS", name: "Lime Juice", price: 119, isVeg: true, desc: "Freshly squeezed lime juice (sweet or salted)." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Mint Lime Juice", price: 129, isVeg: true, desc: "Lime juice blended with fresh garden mint leaves." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Apple Juice", price: 149, isVeg: true, desc: "Freshly pressed sweet apple juice." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Pineapple Juice", price: 149, isVeg: true, desc: "Fresh tropical pineapple juice." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Orange Juice", price: 189, isVeg: true, desc: "Freshly squeezed citrus orange juice." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Sweet Lime Juice", price: 189, isVeg: true, desc: "Fresh Mosambi juice." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Watermelon Juice", price: 189, isVeg: true, desc: "Hydrating fresh watermelon juice." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Sweet & Salt Lemonade", price: 139, isVeg: true, desc: "Sparkling lemonade with balanced sweet & salt touch." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Blue Lagoon", price: 149, isVeg: true, desc: "Blue curaçao syrup, lemon juice & sparkling soda." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Virgin Mojito", price: 149, isVeg: true, desc: "Muddled mint, lime wedges, sugar, and sparkling soda." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Blue Lemonade", price: 159, isVeg: true, desc: "Blue curaçao infused citrus lemonade." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Watermelon Lemonade", price: 159, isVeg: true, desc: "Fresh watermelon crush blended with sparkling lemonade." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Green Apple Mojito", price: 159, isVeg: true, desc: "Tangy green apple syrup muddled with mint and soda." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Green Mint Mojito", price: 159, isVeg: true, desc: "Extra minty cooling sparkling refresher." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Orange Mint Mojito", price: 169, isVeg: true, desc: "Fresh orange juice muddled with mint leaves and soda." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Safe sex on the beach", price: 189, isVeg: true, desc: "Cranberry juice, orange juice, peach syrup over ice." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Mango Cranberry Mojito", price: 209, isVeg: true, desc: "Exotic blend of mango pulp, cranberry juice & mint soda." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Fizzy Apple Mojito", price: 209, isVeg: true, desc: "Crisp fizzy apple soda with muddled lime." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Melon Delight Mojito", price: 209, isVeg: true, desc: "Melon syrup, fresh lime and mint soda." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Berry Blast Desire", price: 209, isVeg: true, desc: "Mixed wild berries crushed with sparkling water." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Regular Tea", price: 49, isVeg: true, desc: "Hot Indian spiced milk tea." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Regular Coffee", price: 59, isVeg: true, desc: "Hot milk coffee." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Black Coffee", price: 59, isVeg: true, desc: "Hot aromatic black espresso." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Soft Drink (Glass)", price: 49, isVeg: true, desc: "Fizzy soft drink glass." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Soft Drink (Can)", price: 99, isVeg: true, desc: "Chilled 330ml beverage can." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Coolberg Beer", price: 99, isVeg: true, desc: "Non-alcoholic malt beverage beer." },
+            { category: "BEVERAGES & MOCKTAILS", name: "Red Bull", price: 159, isVeg: true, desc: "Energy drink can." },
+
+            // PAPAD & ADD ONS
+            { category: "PAPAD & ADD ONS", name: "Fried Papad", price: 29, isVeg: true, desc: "Deep fried crispy lentil papad." },
+            { category: "PAPAD & ADD ONS", name: "Roasted Papad", price: 39, isVeg: true, desc: "Tandoor roasted crunchy papad." },
+            { category: "PAPAD & ADD ONS", name: "Masala Papad", price: 49, isVeg: true, desc: "Roasted papad topped with chopped spicy onion, tomato & chaat masala." },
+            { category: "PAPAD & ADD ONS", name: "Mayo", price: 30, isVeg: true, desc: "Extra creamy garlic mayo dip." },
+            { category: "PAPAD & ADD ONS", name: "Curd", price: 30, isVeg: true, desc: "Fresh plain bowl of curd." },
+            { category: "PAPAD & ADD ONS", name: "Extra Egg", price: 30, isVeg: false, desc: "Additional boiled or fried egg." }
+        ];
+
+        // Categories List
+        const categories = [
+            { id: "ALL", name: "All Dishes", icon: "fa-dumpster-fire" },
+            { id: "VEG SOUPS", name: "Veg Soups", icon: "fa-bowl-food" },
+            { id: "NON-VEG SOUPS", name: "Non-Veg Soups", icon: "fa-bowl-rice" },
+            { id: "VEG STARTERS", name: "Veg Starters", icon: "fa-carrot" },
+            { id: "NON-VEG STARTERS", name: "Non-Veg Starters", icon: "fa-drumstick-bite" },
+            { id: "TANDOORI POT", name: "Tandoori Pot", icon: "fa-fire-burner" },
+            { id: "MAIN COURSE", name: "Main Course", icon: "fa-plate-wheat" },
+            { id: "SIZZLERS & PLATTERS", name: "Sizzlers & Platters", icon: "fa-fire" },
+            { id: "BREADS", name: "Pot Bread", icon: "fa-bread-slice" },
+            { id: "BIRYANI & PULAO", name: "Biryani & Pulao", icon: "fa-bowl-hot" },
+            { id: "NOODLES & RICE", name: "Noodles & Rice", icon: "fa-utensils" },
+            { id: "DESSERTS", name: "Desserts", icon: "fa-ice-cream" },
+            { id: "ICE-CREAM & SHAKES", name: "Shakes & Ice Cream", icon: "fa-glass-water" },
+            { id: "BEVERAGES & MOCKTAILS", name: "Mocktails & Drinks", icon: "fa-martini-glass-citrus" },
+            { id: "PAPAD & ADD ONS", name: "Papad & Sides", icon: "fa-pepper-hot" }
+        ];
+
+        // APP STATE
+        let activeCategory = "ALL";
+        let activeDiet = "ALL";
+        let searchQuery = "";
+
+        // INITIALIZE APP
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCategoryTabs();
+            renderMenuItems();
+        });
+
+        // RENDER CATEGORY TABS
+        function renderCategoryTabs() {
+            const container = document.getElementById('categoryTabs');
+            container.innerHTML = categories.map(cat => `
+                <button onclick="filterCategory('${cat.id}')" 
+                    class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap flex items-center gap-2 transition-all duration-200 border ${
+                        activeCategory === cat.id 
+                            ? 'bg-orange-600 border-orange-500 text-stone-950 shadow-lg shadow-orange-600/30' 
+                            : 'bg-stone-900/80 border-stone-800 text-stone-300 hover:border-stone-700 hover:text-white'
+                    }">
+                    <i class="fa-solid ${cat.icon} ${activeCategory === cat.id ? 'text-stone-950' : 'text-orange-500'}"></i>
+                    <span>${cat.name}</span>
+                </button>
+            `).join('');
+        }
+
+        // FILTER BY CATEGORY
+        function filterCategory(catId) {
+            activeCategory = catId;
+            renderCategoryTabs();
+            renderMenuItems();
+            
+            const categoryObj = categories.find(c => c.id === catId);
+            document.getElementById('currentCategoryTitle').innerHTML = `<span>${categoryObj ? categoryObj.name : 'Dishes'}</span>`;
+        }
+
+        // FILTER BY DIET (Veg / Non-Veg / All)
+        function setDietFilter(diet) {
+            activeDiet = diet;
+            ['ALL', 'VEG', 'NON-VEG'].forEach(d => {
+                const btn = document.getElementById(`diet-${d}`);
+                if (d === diet) {
+                    btn.className = "px-3 py-1.5 rounded-lg font-semibold transition-all bg-orange-600 text-stone-950";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg font-semibold transition-all text-stone-400 hover:text-stone-200";
+                }
+            });
+            renderMenuItems();
+        }
+
+        // HANDLE SEARCH INPUT
+        function handleSearch() {
+            const input = document.getElementById('searchInput');
+            searchQuery = input.value.trim().toLowerCase();
+            const clearBtn = document.getElementById('clearSearch');
+            
+            if (searchQuery.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            renderMenuItems();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = "";
+            searchQuery = "";
+            document.getElementById('clearSearch').classList.add('hidden');
+            renderMenuItems();
+        }
+
+        function resetFilters() {
+            activeCategory = "ALL";
+            activeDiet = "ALL";
+            searchQuery = "";
+            document.getElementById('searchInput').value = "";
+            document.getElementById('clearSearch').classList.add('hidden');
+            setDietFilter('ALL');
+            renderCategoryTabs();
+            renderMenuItems();
+        }
+
+        // RENDER DISH CARDS (READ-ONLY VERSION)
+        function renderMenuItems() {
+            const grid = document.getElementById('menuGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            // Filter logic
+            const filtered = rawMenuData.filter(item => {
+                // Category match
+                const matchCategory = (activeCategory === "ALL") || (item.category === activeCategory);
+                
+                // Diet match
+                let matchDiet = true;
+                if (activeDiet === "VEG") matchDiet = item.isVeg === true;
+                if (activeDiet === "NON-VEG") matchDiet = item.isVeg === false;
+
+                // Search match
+                const matchSearch = searchQuery === "" || 
+                    item.name.toLowerCase().includes(searchQuery) || 
+                    item.desc.toLowerCase().includes(searchQuery) ||
+                    item.category.toLowerCase().includes(searchQuery);
+
+                return matchCategory && matchDiet && matchSearch;
+            });
+
+            // Update item count UI
+            document.getElementById('itemCount').textContent = `Showing ${filtered.length} Items`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = "";
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            grid.innerHTML = filtered.map(item => {
+                const formattedPrice = typeof item.price === 'number' ? `₹${item.price}` : item.price;
+
+                return `
+                    <div class="bg-stone-900/70 border border-stone-800 hover:border-stone-700 rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 box-glow relative overflow-hidden group">
+                        
+                        ${item.special ? `
+                            <div class="absolute -right-12 top-4 bg-gradient-to-r from-orange-600 to-amber-500 text-stone-950 font-extrabold text-[10px] uppercase tracking-wider py-1 px-12 rotate-45 shadow-md">
+                                Special 🎃
+                            </div>
+                        ` : ''}
+
+                        <div>
+                            <!-- Header Info: Indicator + Name -->
+                            <div class="flex items-start gap-2 mb-2 pr-6">
+                                <!-- Veg / Non Veg Symbol Badge -->
+                                <span class="inline-flex items-center justify-center w-5 h-5 rounded border ${item.isVeg ? 'border-green-500' : 'border-red-500'} bg-stone-950 p-0.5 mt-0.5 flex-shrink-0" title="${item.isVeg ? 'Vegetarian' : 'Non-Vegetarian'}">
+                                    <span class="w-2.5 h-2.5 rounded-full ${item.isVeg ? 'bg-green-500' : 'bg-red-500'}"></span>
+                                </span>
+
+                                <h4 class="font-semibold text-stone-100 text-base group-hover:text-orange-400 transition-colors leading-snug">
+                                    ${item.name}
+                                </h4>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-xs text-stone-400 mb-4 line-clamp-2 leading-relaxed font-light">
+                                ${item.desc}
+                            </p>
+                        </div>
+
+                        <!-- Footer: Price Display -->
+                        <div class="flex items-center justify-between pt-3 border-t border-stone-800/80 mt-auto">
+                            <span class="text-xs text-stone-500 uppercase tracking-wider font-semibold">Price</span>
+                            <span class="text-stone-100 font-bold text-base text-spooky-green">${formattedPrice}</span>
+                        </div>
+
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
